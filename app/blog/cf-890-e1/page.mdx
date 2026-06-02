@@ -1,0 +1,241 @@
+import BlogHeader from '@/components/mdx/blog-header'
+import MultiImage from '@/components/mdx/multi-image'
+
+<BlogHeader title='Dynamic Programming on Tree' date='10 August 2023'/>
+
+In this blog, we'll be discussing this [problem](https://codeforces.com/contest/1856/problem/E1) to demonstrate dynamic programming on tree and a nice trick.
+
+---
+
+## Abridged Statement
+
+You're given a tree of $n$ nodes, $1 \leq n \leq 5000$ and an array $p$ where $p_i$ denotes the parent of node $i+1$. Let's define $f(a)$ as the score of a permutation $a$ of $1$ to $n$ on the tree. Score in this context is defined as the number of pairs $(u, v)$ such that $a[u] \lt a[lca(u, v)] \lt a[v]$ where $lca(u,v)$ denotes the lowest common ancestor of node $u$ and $v$. Our task is to find the maximum $f(a)$ among all the possible permutation $a$ to the tree.
+
+More about the lowest common ancestor (LCA) of two nodes can be found in [here](https://en.wikipedia.org/wiki/Lowest_common_ancestor).
+
+## Example
+
+Assuming the input of our tree is as follows:
+
+```
+5
+1 1 3 3
+```
+
+The given input can be visualized as follows:
+
+<MultiImage
+  images={[
+    "/images/blogs/1856-e1/example1.png",
+  ]}
+  width="330px"
+  height="300px"
+/>
+
+Assume $a = [2, 1, 4, 5, 3]$:
+
+<MultiImage
+  images={[
+    "/images/blogs/1856-e1/example2.png",
+  ]}
+  width="330px"
+  height="300px"
+/>
+
+The score $f(a)$ will be $4$, because there are $4$ pairs of node $u, v$ that satisfy $a[u] \lt a[lca(u, v)] \lt a[v]$:
+
+- $(2,3)$ since $lca(2,3)=1$ and $1<2<4$
+- $(2,4)$ since $lca(2,4)=1$and $1<2<5$
+- $(2,5)$ since $lca(2,5)=1$and $1<2<3$
+- $(5,4)$ since $lca(5,4)=3$ and $3<4<5$
+
+## Solution
+
+Let's first focus in finding the number of pairs $(u,v)$ for an individual node $x$ that satisfies $a[u] \lt a[x] \lt a[v]$ where $x = lca(u,v)$, let's also call this the score of node $x$.
+
+For example, let's try to find the score of node $1$ in the following tree.
+
+<MultiImage
+  images={[
+    "/images/blogs/1856-e1/example3.png",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Specifically, we will find the number of pairs $(u,v)$ that has $lca(u,v) = 1$ and $a[u] < a[1] < a[v]$. The number beside each of the node $i$ represents $a[i]$.
+
+We could manually count the scores, but that will only help in understanding the problem and won't be helping in finding the solution. Hence, we'll focus on finding a more efficient and systematic way of counting the number of pairs that satisfy the condition. To do this, we will gather some observations.
+
+The first observation is that for any two nodes in the subtree of a children (of node $i$) won't have node $i$ as their LCA. For example, node $5$ and node $6$ belongs in the subtree of node $2$ (children of node $1$), the LCA of node $5$ and node $6$ is node $2$ instead of $1$. This is pretty obvious, because the common ancestor (not necessarily lowest) of two nodes in the subtree of node $i$ won't be higher than node $i$.
+
+Thus, we can further abstract our tree to the following way.
+
+<MultiImage
+  images={[
+    "/images/blogs/1856-e1/example4.png",
+  ]}
+  width="500px"
+  height="350px"
+/>
+
+The abstracted tree only contains the necessary information of the subtree of each children now where $d$ denotes the number of nodes in the subtree (including itself) and $s$ denotes the number of nodes $i$ in the subtree that has $a[i] < a[1]$. For example, in the subtree of node $2$, the set of nodes in that subtree are $\{2, 5, 6\}$ which has a size of $3$ and the set of nodes $i$ that has $a[i] < a[1]$ are $\{5, 6\}$ which has a size of $2$.
+
+\*The term "subtree" in this blog will simply refer to the subtree with the children as the root.
+
+To find the score, we can use the formula below:
+
+$$
+\begin{align*}
+\sum_{i=1}^{m} \left((d[i] - s[i]) \cdot \sum_{j=1, j \neq i}^{m} s[j]\right)
+\end{align*}
+$$
+
+where $m$ denotes the number of children/subtrees for node $1$. This is basically equivalent to pairing every node $i$ that has $a[i] < a[1]$ with every node $j$ where $a[1] < a[j]$ such that they are in a different subtree. We can use the same formula to find the number of pairs $(u,v)$ for any node $i$ as LCA. To find $f(a)$ we can sum the scores of each LCA using the above formula.
+
+Now we know how to find the score for any node $i$ as LCA assuminng we have pre-assigned a permutation to the tree. But, that's not our main objective for this problem, we're tasked to maximize the value $f(a)$ instead of counting $f(a)$ based off a pre-defined $a$.
+
+So, how do we find the optimal $a$ that maximizes $f(a)$?
+
+The question is - Do we even need to find it? Do we even need to know about $a$ to find our answer? Based on the previous calculation, the only things that we need to calculate the score of each LCA is just $s$ and $d$ of each subtree.
+
+It turns out we don't really need to know the permutation $a$ to count the answer.
+
+For each LCA, we can simply assign the value of $s$ for each subtree of its children where $s \leq d$ (because the total number of nodes in the subtree that is smaller than $a[lca]$ cannot be bigger than the total nodes in the subtree) and there will always be a valid $a$ that will give the same set of $s$ and $d$. To see why this is true, we will demonstrate in the same example above.
+
+<MultiImage
+  images={[
+    "/images/blogs/1856-e1/example5.png",
+  ]}
+  width="500px"
+  height="350px"
+/>
+
+Assuming we don't know the permutation $a$ and we know the value of $d$ for each subtree of children $i$ and the target value of $s$. One way to achieve is as follows:
+
+<MultiImage
+  images={[
+    "/images/blogs/1856-e1/example6.png",
+  ]}
+  width="500px"
+  height="340px"
+/>
+
+Generally, for LCA $x$, we can set $x = o[\sum_{i=1}^m s[i]] + 1$ where $o[i]$ denotes the $i$-th smallest number of the available numbers. For each of the subtree $i$, we set $s[i]$ of the nodes in the subtree with distinct value smaller than $a[x]$.
+
+Now, we can use Dynamic Programming (DP) to maximize the value of each LCA $x$.
+
+Let's define the DP state as follows:
+
+$dp[i][j]$ = the maximum scores for the first $i$ subtrees (children of $x$) such that there are $j$ nodes that is $< a[x]$
+
+To understand the DP transition, let's first look at the difference betweeen the score for $m$ children and $m+1$ children first.
+
+<div align='center'>
+$$
+\begin{align*}
+     &\left(\sum_{i=1}^{m+1} (d[i] - s[i]) \cdot \sum_{j=1, j \neq i}^{m+1} s[j]\right) - \left(\sum_{i=1}^{m} (d[i] - s[i]) \cdot \sum_{j=1, j \neq i}^{m} s[j]\right)\\
+    =&  \left(\sum_{i=1}^{m} (d[i] - s[i]) \cdot s[m+1]\right) + \left((d[m+1]-s[m+1]) \cdot \sum_{i=1}^{m} s[i]\right)
+\end{align*}
+$$
+</div>
+
+The equation can be derived by cancelling off each similar term on both side of the subtract. And it leads us to the DP transition below:
+$$
+\begin{align*}
+dp[i][j+k] = \max\Big(& dp[i][j+k], \\
+&dp[i{-}1][j] + k \cdot \left( \left(\sum_{l=1}^{i-1} d[l]\right) - j \right) + (d[i] - k) \cdot j \Big)
+\end{align*}
+$$
+
+
+In each transition, we're basically finding the maximum score for the first $i$ subtrees if we set $s[i] = k$.
+
+Finally, we just need to sum up the DP answer for each LCA.
+
+But wait a minute, isn't this DP transition $O(N^3)$? Well, hold your horses for a moment. I will prove the $O(N^2)$ time complexity in the analysis below.
+
+## Source Code
+
+<details>
+<summary>Source Code</summary>
+```cpp
+#include <bits/stdc++.h>
+#define all(x) begin(x),end(x)
+#define sz(x) x.size()
+#define pb push_back
+ 
+using namespace std;
+using ll = long long;
+using vi = vector<int>;
+using vll = vector<ll>;
+
+pll dfs(int node, vector<vi>& adj){
+    ll score = 0;
+    vi desc(sz(adj[node]));
+    int total = 0;
+    for(int i{}; i < sz(adj[node]); i++){
+        pll cur = dfs(adj[node][i], adj);
+        score += cur.fir;
+        total += cur.sec;
+        desc[i] = cur.sec;
+    }
+    vll dp(total+1);
+    vll dp1(total+1);
+    int cur = 0;
+    ll mx = 0;
+    for(ll i{}; i < sz(adj[node]); i++){
+        for(ll j{}; j <= cur; j++){
+            for(ll k{}; k <= desc[i]; k++){
+                dp[j+k] = max(dp[j+k], dp1[j] + k * (cur - j) + j * (desc[i] - k));
+                mx = max(mx, dp[j+k]);
+            }
+        }
+        cur += desc[i];
+        swap(dp, dp1);
+        fill(all(dp), 0);
+    }
+    return {mx+score, total + 1};
+}
+
+void solve(){
+    int n;
+    cin >> n;
+    vector<vi> adj(n);
+    for(int i{1}; i <= n-1; i++){
+        int p;
+        cin >> p;
+        p--;
+        adj[p].pb(i);
+    }
+    cout << dfs(0, adj).fir << '\n';
+}
+
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    solve();
+    return 0;
+}
+
+```
+</details>
+
+## Time Complexity Analysis
+
+Before going into this section, you can have a read on the visual proof of the $O(N^2)$ complexity of certain tree DPs in this [article](https://codeforces.com/blog/entry/100910).
+
+Now let's observe our DP transition in pseudocode.
+
+```
+
+for i in range(0, total children of root):
+	for j in range(0, total nodes in the first i-1 subtrees):
+		for k in range(0, total nodes in the ith subtree):
+			// transition
+
+```
+
+How do we match this to the one we see in the article?
+
+Although it has different transition, but they're essentially the same thing! For each batch of nodes in the $i$-th subtree, we're matching all of them to the previous nodes. The total number of operations is essentially the total number of pairs in the subtree. Therefore, the time complexity of this transition is $O(n^2)$, because the total pairs of nodes is $\leq n^2$. $O(n^2)$ can easily pass $n \leq 5000$ in 2 seconds.

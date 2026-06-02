@@ -1,0 +1,394 @@
+import BlogHeader from '@/components/mdx/blog-header'
+import MultiImage from '@/components/mdx/multi-image'
+
+<BlogHeader title='Debiasing Word Embeddings' date='23 March 2024'/>
+
+Recently, while reading about word embeddings in Natural Language Processing (NLP), I found the linear algebra behind debiasing them fascinating. I usually write notes to reinforce my learning, so I figured why not turn them into a blog post? My hope is to help others grasp these concepts by visualizing the linear algebra that powers the algorithms. This also gave me the perfect excuse to experiment with [Manim](https://github.com/3b1b/manim), the animation engine popularized by 3Blue1Brown.
+
+Without further ado, let's dive in!
+
+---
+
+## What are Word Embeddings?
+
+In NLP, a word embedding is a technique used to represent text in a format that machines can understand. Specifically, each word $w$ is mapped to a $d$-dimensional vector $\overrightarrow{w} \in \mathbb{R}^d$, allowing the machine to process its semantic meaning mathematically.
+
+For example, the word vectors $\overrightarrow{w}$ for the words $\text{man}$, $\text{woman}$, $\text{king}$, and $\text{queen}$ might look something like this:
+
+$$
+\begin{align*}
+\overrightarrow{w}_{\text{man}} &= 
+    \begin{bmatrix}
+      x_{\text{gender}} = -1  \\
+      x_{\text{royale}} = 0 \\
+      \vdots \\
+      x_{\text{number}} = 0
+    \end{bmatrix}
+    \\
+    \\
+\overrightarrow{w}_{\text{woman}} &= 
+    \begin{bmatrix}
+      x_{\text{gender}} = 1  \\
+      x_{\text{royale}} = 0 \\
+      \vdots \\
+      x_{\text{number}} = 0
+    \end{bmatrix}
+    \\
+    \\
+\overrightarrow{w}_{\text{king}} &= 
+    \begin{bmatrix}
+      x_{\text{gender}} = -1  \\
+      x_{\text{royale}} = 1 \\
+      \vdots \\
+      x_{\text{number}} = 0
+    \end{bmatrix}
+    \\
+    \\
+\overrightarrow{w}_{\text{queen}} &= 
+    \begin{bmatrix}
+      x_{\text{gender}} = 1  \\
+      x_{\text{royale}} = 1 \\
+      \vdots \\
+      x_{\text{number}} = 0
+    \end{bmatrix}
+    \\
+    \\
+\end{align*}
+$$
+
+Let's break down the vectors above. Each word vector, denoted by $\overrightarrow{w}$, has $d$ dimensions, and each dimension represents the relationship between the word $w$ and a specific feature.
+
+The first dimension represents the $\text{gender}$ feature. The words $\text{man}$ and $\text{king}$ have $x_{\text{gender}} = -1$, indicating a masculine trait, while $\text{woman}$ and $\text{queen}$ have $x_{\text{gender}} = 1$, indicating a feminine trait.
+
+The same logic applies to the second dimension, which represents the $\text{royale}$ feature. The words $\text{king}$ and $\text{queen}$ possess this feature ($1$), while the others do not ($0$).
+
+Finally, looking at the last feature, $\text{number}$, none of the words have it, so it remains $0$.
+
+However, this is a highly idealized example meant for interpretation. In the real world, words don't have such clear-cut, manually assigned features. Instead, word vectors are learned automatically using machine learning algorithms trained on massive datasets from the Internet. Furthermore, individual dimensions in real-world word embeddings are rarely interpretable to humans in such a straightforward way. A single feature $x_1$ is typically a complex mix of multiple abstract concepts rather than distinct characteristics like $\text{gender}$ or $\text{royale}$.
+
+## Analogy
+
+A good set of word embeddings that are trained using a large training set have a really awesome property, which is **analogy**, which we'll explore below.
+
+If I were to ask you:
+
+$$
+\begin{align*}
+\text{man is to woman as king is to what?}
+\end{align*}
+$$
+
+You would easily answer $\text{queen}$. But can a machine do this as effortlessly as you?
+
+The answer is **yes**, thanks to word embeddings. Let's dive into how it works.
+
+We know that the concepts of $\text{man}$ and $\text{woman}$ are nearly identical in every aspect except for one: $\text{gender}$. Assuming we have a well-trained set of word embeddings, we can take the word vector for $\text{man}$ ($\overrightarrow{w}_{\text{man}}$) and subtract the word vector for $\text{woman}$ ($\overrightarrow{w}_{\text{woman}}$). The resulting vector, $\overrightarrow{d}$, represents the conceptual difference in $\text{gender}$:
+
+$$
+\begin{align*}
+\overrightarrow{d} = \overrightarrow{w}_{\text{man}} - \overrightarrow{w}_{\text{woman}}
+\end{align*}
+$$
+
+Using this difference vector $\overrightarrow{d}$, our goal is to find a word $w$ whose relationship to $\text{king}$ mirrors this exact $\text{gender}$ difference. Mathematically, we are looking for a word $w$ that satisfies:
+
+$$
+\begin{align*}
+w = \text{argmax}_{w} \text{ sim}(\overrightarrow{d}, \overrightarrow{w}_{\text{king}} - \overrightarrow{w}_{w})
+\end{align*}
+$$
+
+Here, $\text{sim}$ is a similarity function used to compare two vectors. In NLP, the **cosine similarity** $\cos(\overrightarrow{u}, \overrightarrow{v})$ is the most common choice:
+
+$$
+\begin{align*}
+\cos(\overrightarrow{u}, \overrightarrow{v}) = \frac{\overrightarrow{u} \cdot \overrightarrow{v}}{\| \overrightarrow{u} \| \|\overrightarrow{v} \|}
+\end{align*}
+$$
+
+where $\overrightarrow{u} \cdot \overrightarrow{v}$ is the dot product of the vectors, and $\| \overrightarrow{u} \|$ represents the L2 norm (magnitude) of $\overrightarrow{u}$.
+
+This formula computes the cosine of the angle $\theta$ between vectors $\overrightarrow{u}$ and $\overrightarrow{v}$:
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/cos-sim.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+When two vectors point in roughly the same direction, their cosine similarity is high (approaching $1$).
+
+In our example, finding a word $w$ such that $\text{king}$ is to $w$ as $\text{man}$ is to $\text{woman}$, the algorithm would identify $\text{queen}$. This works beautifully because the geometric relationship between $\text{king}$ and $\text{queen}$ captures the same $\text{gender}$ difference as the relationship between $\text{man}$ and $\text{woman}$.
+
+In general, to find a word $w$ such that $w_1$ is to $w_2$ as $w_3$ is to $w$, we evaluate:
+
+$$
+\begin{align*}
+w = \text{argmax}_{w} \text{ sim}(\overrightarrow{w_1} - \overrightarrow{w_2}, \overrightarrow{w}_{3} - \overrightarrow{w}_{w})
+\end{align*}
+$$
+
+## Gender Bias in Analogies
+
+Now that we understand how machines solve word analogies, let's see how this algorithm handles the following query using standard, publicly available word embeddings:
+
+$$
+\begin{align*}
+\text{man is to woman as computer programmer is to what?}
+\end{align*}
+$$
+
+If queried on an embedding space that hasn't been debiased, the closest vectors usually correspond to words like:
+
+$$
+\begin{align*}
+&\text{1. homemaker}\\
+&\text{2. nurse}\\
+&\text{3. hairdresser}\\
+&\text{4. nanny}\\
+&\text{5. stylist}\\
+\end{align*}
+$$
+
+The bias is glaring. The embeddings have absorbed stereotypical gender roles from their training data. While words like $\text{man}$ and $\text{woman}$ inherently carry gender distinctions, occupations like "programmer" or "nurse" should theoretically be gender-neutral.
+
+## Debiasing Word Embeddings
+
+### The Gender Subspace
+
+Before examining the debiasing algorithm, let's visualize the "gender subspace" to understand how these biases manifest geometrically.
+
+Imagine a simple number line (a $1D$ space) representing gender. Points on this line represent words. A positive value might indicate a feminine connotation, while a negative value indicates a masculine one. A word located precisely at $0$ would be perfectly gender-neutral.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/gender-sub.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Let's observe where some biased occupation words might fall on this line.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/gender-sub-ex.png",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+To eliminate this bias, we need to move these inherently gender-neutral words to the origin ($0$ on the gender axis), like so:
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/debiased-sub.png",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+And that is precisely the goal of the debiasing algorithm.
+
+### Neutralizing
+
+If the $\text{gender}$ subspace were merely a single, explicit $1D$ feature, removing bias from gender-neutral words would be trivial: we would just set that specific coordinate to $0$.
+
+In reality, the $\text{gender}$ direction is embedded within a complex, high-dimensional space. As mentioned earlier, individual dimensions are not cleanly interpretable, meaning "gender" is likely distributed across many axes. So, how do we isolate the $\text{gender}$ subspace?
+
+We can identify it using a method similar to how we solved analogies. By taking pairs of words that possess clear gender distinctions such as $(\text{man}, \text{woman})$, we isolate the gender direction. Since the primary semantic difference between these words is gender, subtracting their vectors gives us a direction that closely approximates the $\text{gender}$ subspace in our high-dimensional model. 
+
+Below is a visualization of this concept, simplified into a $2D$ space where $g$ represents the $\text{gender}$ direction.
+
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/find-subspace.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Our objective is to ensure that every word that should be gender-neutral has a zero projection along this $\text{gender}$ subspace $g$.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/neutralize.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Geometrically, setting a word's gender component to $0$ is equivalent to making its vector **orthogonal** ($90^\circ$) to the $\text{gender}$ subspace. Let's look at the math to achieve this.
+
+To obtain a vector $\overrightarrow{u}_\perp$ that is the orthogonal component of $\overrightarrow{u}$ with respect to $\overrightarrow{v}$, we use vector projection:
+
+$$
+\begin{align*}
+\overrightarrow{p}_{u, v} &= \frac{\overrightarrow{u} \cdot \overrightarrow{v}}{\|\overrightarrow{v}\|^2} \overrightarrow{v}\\
+\overrightarrow{u}_\perp &= \overrightarrow{u} - \overrightarrow{p}_{u, v}
+\end{align*}
+$$
+
+where $\overrightarrow{p}_{u, v}$ is the projection of $\overrightarrow{u}$ onto $\overrightarrow{v}$.
+
+Here is a visualization of finding $\overrightarrow{u}_\perp$:
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/find-oth.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+To debias a gender-neutral word $w$, we apply the exact same logic against the gender direction $g$:
+
+$$
+\begin{align*}
+\overrightarrow{p}_{w, g} &= \frac{\overrightarrow{w} \cdot \overrightarrow{g}}{\|\overrightarrow{g}\|^2} \overrightarrow{g}\\
+\overrightarrow{w}_\perp &= \overrightarrow{w} - \overrightarrow{p}_{w, g}
+\end{align*}
+$$
+
+Conceptually, the first step extracts the amount of gender bias present in the word vector. The second step subtracts this bias, leaving a purely gender-neutral representation.
+
+This process is known as **Neutralizing**.
+
+### Equalizing
+
+Now that we have neutralized the word $\text{programmer}$, is it entirely free from gender bias? 
+
+To find out, let's look at how the word vectors for $\text{programmer}$, $\text{man}$, and $\text{woman}$ might be positioned relative to the $\text{gender}$ subspace *after* neutralizing $\overrightarrow{w}_{\text{programmer}}$.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/after-neutral.png",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+At first glance, it looks fine. $\overrightarrow{w}_{\text{programmer}}$ is strictly orthogonal to the $\text{gender}$ direction. What could go wrong?
+
+The problem lies in relative distances.
+
+If you look closely at the diagram above, which word is geometrically closer to $\text{programmer}$: $\text{man}$ or $\text{woman}$? 
+
+The vector for $\text{man}$ is still closer to $\text{programmer}$. This means that while the direct gender association has been removed, a subtle spatial bias remains. 
+
+To completely resolve this, we must ensure that any inherently gendered pair (like $\text{man}$ and $\text{woman}$, or $\text{guy}$ and $\text{gal}$) is equidistant from the neutralized word. This next step is called **Equalizing**.
+
+Visually, equalization shifts the gendered pairs so they are perfectly mirrored across the orthogonal axis:
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/equalized.png",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+In the diagram above, $\overrightarrow{w}_{\text{man}}$ and $\overrightarrow{w}_{\text{woman}}$ are now equidistant from the orthogonal subspace. Because they are equidistant to the axis, they will also be equidistant to any neutralized word lying on that axis.
+
+So, how do we compute this mathematically?
+
+First, we calculate the mean vector $\overrightarrow{\mu}$ of the two gender-distinct word vectors. This gives us a central anchor point between the two words.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/equalize-s1.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Next, we project this mean vector orthogonally against the $\text{gender}$ subspace $g$ to find $\overrightarrow{\mu}_\perp$. This uses the exact same neutralization technique discussed earlier.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/equalize-s2.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Semantically, $\overrightarrow{\mu}_\perp$ represents the shared core meaning of $\text{man}$ and $\text{woman}$, stripped of any gender. Since gender-distinct pairs should theoretically differ *only* in gender, isolating their shared mean and dropping the gender component gives us a purely neutral reference point. This neutral baseline $\overrightarrow{\mu}_\perp$ will be crucial for calculating the final equalized coordinates.
+
+With the non-gender information secured in $\overrightarrow{\mu}_\perp$, we now need to determine the equalized gender differences, $\overrightarrow{d}_{\text{man}}$ and $\overrightarrow{d}_{\text{woman}}$. These will tell us exactly how far to shift away from $\overrightarrow{\mu}_\perp$.
+
+To do this, we first extract the gender components for both words by projecting them onto the gender axis.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/equalize-s3.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+Then, we calculate their displacement from their midpoint's projection ($\overrightarrow{p}_{\mu, g}$) to find $\overrightarrow{d}_{\text{man}}$ and $\overrightarrow{d}_{\text{woman}}$.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/equalize-s4.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+*(Note: The animation formula displays the full normalized and scaled version to ensure magnitude constraints, which we'll dissect shortly. For now, understand that it represents the balanced gender shift for each word.)*
+
+Finally, we add these equalized gender shifts back to our neutral baseline $\overrightarrow{\mu}_\perp$ to obtain the final equalized word vectors.
+
+<MultiImage
+  images={[
+    "/images/blogs/debiasing-embedding/equalize-s5.gif",
+  ]}
+  width="500px"
+  height="300px"
+/>
+
+By guaranteeing that gendered pairs are perfectly symmetrical around the orthogonal subspace, we drastically reduce residual spatial bias within the embedding model.
+
+Now, let's unpack the formal equation used to compute the equalized gender shift:
+
+$$
+\begin{align*}
+\overrightarrow{d}_{\text{w}} = \sqrt{1 - \| \overrightarrow{\mu}_\perp \|^2}\frac{\overrightarrow{p}_{\text{w}, g} - \overrightarrow{p}_{\mu, g}}{\|\overrightarrow{p}_{\text{w}, g} - \overrightarrow{p}_{\mu, g}\|}
+\end{align*}
+$$
+
+An important detail I haven't mentioned yet is that this algorithm assumes all word vectors $\overrightarrow{w}$ are strictly unit length ($\|\overrightarrow{w}\| = 1$). By enforcing unit magnitude, the model relies purely on angular direction (cosine similarity) rather than raw distance.
+
+Looking at the right side of the expression:
+
+$$
+\begin{align*}
+\frac{\overrightarrow{p}_{\text{w}, g} - \overrightarrow{p}_{\mu, g}}{\|\overrightarrow{p}_{\text{w}, g} - \overrightarrow{p}_{\mu, g}\|}
+\end{align*}
+$$
+
+This part computes the exact displacement from the midpoint and then normalizes it, creating a unit vector (magnitude of $1$) pointing in the correct gender direction.
+
+Next, we look at the scaling factor:
+
+$$
+\begin{align*}
+\sqrt{1 - \| \overrightarrow{\mu}_\perp \|^2}
+\end{align*}
+$$
+
+Because we require the final equalized vector to maintain a magnitude of $1$, we need to scale this gender shift precisely. By multiplying the normalized direction by this square root, we guarantee that when $\overrightarrow{d}_{\text{w}}$ is added orthogonally to $\overrightarrow{\mu}_\perp$, the resulting hypotenuse conforms perfectly to $\| \overrightarrow{\mu}_\perp + \overrightarrow{d}_{\text{w}} \| = 1$.
+
+And that concludes our dive into debiasing word embeddings! I had a great time creating these visualizations with Manim, and building them honestly deepened my own understanding of the underlying linear algebra. 
+
+Thank you for reading!
+
+---
+
+## References
+
+[Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings](https://proceedings.neurips.cc/paper_files/paper/2016/file/a486cd07e4ac3d270571622f4f316ec5-Paper.pdf)

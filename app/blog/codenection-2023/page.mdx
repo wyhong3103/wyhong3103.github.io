@@ -1,0 +1,157 @@
+import BlogHeader from '@/components/mdx/blog-header'
+
+<BlogHeader title='Problemsetting at CodeNection 2023' date='30 March 2024'/>
+
+CodeNection 2023 wrapped up on 16th December 2023, and it still feels a bit surreal looking back on it. After all, it was the first competitive programming contest I've set, and I would like to use this blog to share my experience in problemsetting and how you can get started too. I'll also share some behind-the-scenes facts about a few problems. Note that this blog may contain spoilers, so feel free to check out the problems first on [this repository](https://github.com/wyhong3103/codenection-2023).
+
+---
+
+# Problemsetting
+
+Prior to CodeNection 2023, I had zero experience in preparing problems, but I had already solved thousands of problems and was a Candidate Master on Codeforces. That served as a good foundation for me in preparing problems because I had a good idea about the competitive programming landscape and knew what it's like to be a participant in a competitive programming contest. In my opinion, being able to solve problems is definitely a prerequisite for creating good problems. However, being able to solve problems doesn't necessarily mean you can create good problems. So, I still had a lot to learn about preparing problems.
+
+But, where can I learn about preparing problems? If you didn't know already, Codeforces is the go-to website for anything related to competitive programming. So, the first thing I did was to find blogs from there, and it did not disappoint me. Many great problemsetters had shared insights on this matter. Here are some of the blogs that I found helpful, in no particular order of preference:
+
+1. [Problemsetter's Memoir](https://codeforces.com/blog/entry/12683)
+2. [Way of problemsetter](https://codeforces.com/blog/entry/12642)
+3. [On problemsetting](https://codeforces.com/blog/entry/70178)
+4. [How to come up with problem ideas](https://codeforces.com/blog/entry/66837)
+
+These blogs surely tell a lot about how an experienced problemsetter thinks about problemsetting. Of course, they all have a lot of experience in both setting and solving problems, which is what made them great. If you have already read through some of the blogs, I guess you can already tell that coming up with an original idea is not easy. It's a very time-consuming task and usually happens spontaneously.
+
+Time is one thing we don't have for CodeNection 2023. We have about 3 months to prepare everything, from coming up with good ideas to turning those ideas into actual problems with high quality on online judges. Maybe it is possible when you have a team of experienced competitive programmers, but unfortunately, this was not my case (although my team was very responsible).
+
+So, here's roughly how I did it and how you can do it too if you're trying to set problems.
+
+## Finding the Right Difficulty
+
+Before coming up with ideas, finding the right difficulty is important! Even if your problems are very nice and of high quality, if no one can solve them, it's just another wasted effort. To find the right difficulty, you need to do research on your target audience.
+
+Fortunately, having participated in some competitions in Malaysia, I roughly knew the right difficulty. In my opinion, any problem that has a difficulty roughly equivalent to **R1400** in Codeforces should be good enough for an average participant here. For more advanced participants, **R1800** will probably do. Anyway, these are just my rough guesses. If you took part in CodeNection 2023, you can already tell how off my estimation on the appropriate difficulty was, haha.
+
+Oh yeah, in ICPC, a good problem set is a problem set where there is at least one solve for each problem, but no one solves all the problems. This can be challenging to achieve if your target audience isn't advanced enough, but it's a good thing to keep in mind.
+
+## Coming up with Ideas
+
+Once you've found the right difficulty, it's time to come up with ideas. What I did is pretty much similar to what you would read in the blogs I attached above. There are two approaches that helped me come up with original ideas.
+
+First, it's about getting inspired. The inspiration for problem ideas can come from any aspect of your life, literally any aspect of your life.
+
+For example, imagine that you're part of the organizing committee of a volleyball competition and the schedule for the competition was set in a way that every team would get to play every other team (Round Robin). But, on the day of the competition, there are special circumstances that force you to end the competition much earlier than expected. So, you come up with a new plan: you want each team to only play 2 games rather than playing against every other team.
+
+And just like that, you came up with a problem:
+
+If you're given $N$ teams, how do you schedule it in such a way that each team plays only 2 other different teams?
+
+For those of you who took part in the CodeNection 2023 Final Round, this problem may sound very familiar to you, haha. That's exactly how I came up with Codey and Schedule.
+
+Getting inspiration this way is very spontaneous, it can happen in the most unexpected way. So, instead of waiting to get inspired, we can also seek inspiration, which leads me to my next approach.
+
+Next, it's about seeking inspiration. To seek inspiration, you need to solve problems. In the process of solving a problem, it's very easy to think about the problem in a different direction, and these are the times when you can get really creative. You should try to brainstorm how a subproblem can be twisted and solved. This is how I came up with the original idea of Codey and Team Selection (bonus version) from this [problem](https://atcoder.jp/contests/abc288/tasks/abc288_e).
+
+## "Coming up" with Ideas
+
+Wait, didn't we just talk about coming up with ideas? And why is "coming up" in quotes?
+
+Yes, there is the another way to "come up" with problems, it's very fast and efficient, but also considered very [unprofessional](https://codeforces.com/blog/entry/106697) among the Codeforces community. However, I think an exception can be made when you're preparing problems for a target audience that has little to no experience in competitive programming.
+
+In case if you didn't know what I was talking about, it's about using existing problems. One thing you cannot deny about existing problems is that there are many with very beautiful ideas that can be very educational to newcomers and experts in competitive programming.
+
+So yeah, to make sure we were on schedule and had a good problem set, I used some existing problems. It helped a lot in terms of preparing enough problem ideas for all the rounds and allowed us to spend our time on the other tasks. Some of my favourite problems in CodeNection 2023 that were existing problems are Codey and Apples and Codey and Zombies.
+
+However, there are caveats to this. If you have decided to use an existing problem, you need to make sure that your newly created problems cannot be traced back to the original problem. Here are some advice I have for you if you want to use an existing problem:
+
+1. Don't use the same set of sample test cases as the original problem.
+2. Don't use the same narrative as the original problem.
+3. Try to reverse-engineer yourself to see if you can find the original problem.
+4. If you have submitted a solution to that problem, make sure no one can find your submission history.
+
+## Turning Ideas into Problems
+
+Once you have collected enough ideas for your round, it's time to turn them into actual problems that people can solve. This step is all about perfection.
+
+To turn an idea into a problem:
+
+First, you will need a narrative for your problem. Not just any narrative, but a narrative that can help participants to easily understand the problem you are trying to model. Remember, reading the problem statement is **NOT** a reading comprehension test, so keep it **short and simple**! Some other things to note are proper grammar and the proper use of $\LaTeX$. Making sure your problem statement is grammatically correct and has the proper use of $\LaTeX$ can easily be done with ChatGPT.
+
+Next, you will need to write a solution to your problem. Before you do this, you can write an editorial. This can help you make sense of your solution and possibly detect any errors before you implement it.
+
+Then, you will also need to write a generator and validator for generating and validating the test cases for your problem, respectively. For generating test cases, you can use [testlib.h](https://github.com/MikeMirzayanov/testlib) by Mike, and [here's](https://codeforces.com/blog/entry/18291) why you should use it. Keep in mind that you should also generate test cases for those edge cases or cases with the maximum constraints.
+
+Oh yeah, before all that, you also need to decide which platform you want to use. Here's my take on the two most common platforms used in competitions in Malaysia:
+
+1. [Codeforces](https://codeforces.com/)
+
+- Pros: An amazing platform with rich set of features that allows you to set your round in different format that you like.
+- Cons: High learning curve and unstable sometimes (It's more stable nowadays).
+
+2. [HackerRank](https://www.hackerrank.com/)
+
+- Pros: Simple, easy, and stable (at least for now).
+- Cons: It has VERY limited options for you to tweak your round and some features are VERY buggy.
+
+I went with HackerRank for CodeNection 2023 because it was much stable than Codeforces during that time. That's the only reason. Also, that was before I found out how limited my options were on that platform. I really don't recommend it if you want to do more advanced stuff with your round. It was a nightmare trying to work with it.
+
+## Testing
+
+So, you have finished composing all the problems on your desired platform and you still have a bit of time. What should you do now?
+
+Keep testing your contest until the start of your contest.
+
+Of course, you can't be the one doing it, since if you already made it to this stage, the problem set is probably good enough for you. Find people you can trust to do it (this will also mean they cannot participate). Here are some of the things that are worth testing for your round:
+
+- Are the difficulties of your problems balanced?
+- Are the problem statements understandable?
+- Can a solution that was supposed to fail get accepted?
+- Are the problems solvable within the constraints given?
+
+For CodeNection 2023, I am very grateful to have [rabbitsthecat](https://codeforces.com/profile/rabbitsthecat), [ExpensiveAC](https://codeforces.com/profile/ExpensiveAC) and some of the organizing committees help test the problem set. They are the reason the problem set didn't have major flaws.
+
+<br />
+<br />
+
+---
+
+# Fun Facts
+
+Let's look at some fun (well, not really fun) facts about some of the problems in CodeNection 2023.
+
+## Codey and CodeNection
+
+This is the only problem with a 100% acceptance rate. Thank God.
+
+## Codey and Math
+
+The intended time complexity of the solution is $O(1)$, and I definitely didn't expect there to be an $O(n)$ solution, so we didn't try to increase the maximum constraint to $10^{18}$. It the end, there were a couple $O(n)$ solutions that get accepted which was a result of guessing the solution.
+
+## Codey and Team Selection
+
+The original idea (currently the bonus version) was supposed to be in the final problem set, but we thought it might be a bit too hard for its position. In the end, only roughly 10% of the teams solved the reduced version. Imagine if we had insisted on the original idea.
+
+## Codey and Schedule
+
+This problem was actually inspired by an actual scheduling problem I encountered when organizing a volleyball competition. More details about it were described above.
+
+## Codey and School Supplies
+
+I have to admit, I didn't know it would be that difficult. The acceptance rate from the previous problem to this one has a huge gap. I was kind of expecting almost everyone to solve it. I guess this just shows how off my estimation was regarding the right difficulty level.
+
+## Codey and Sightseeing
+
+The intended time complexity for this problem is $O(n + m)$. However, because of weak test cases, you could score ~90% of the full score by just doing a BFS from every node, which runs in $O(n \cdot (n + m))$. This is also a downside of using HackerRank, you can only allow partial scoring in your contest.
+
+## Codey and Apples
+
+This has to be one of my favourite problems of the contest. However, just one or two weeks before the competition, one of the testers solved this problem by generating all possible subsets, which runs in $O(2^n)$. I was shocked about how the test cases didn't eliminate this solution. Luckily, it was found before the competition and we had time to add test cases.
+
+## Codey and Zoey
+
+This was actually one of the first original problems I came up with. The most straightforward solution to this problem was an $O(n^5)$ solution that anyone can easily come up with if they understood dynamic programming well enough. When I was trying to solve this problem, I also managed to come up with an $O(n^4)$ DP solution, and I found the idea to be kind of nice too, but it may be a bit difficult for people to solve. So, in the end, the constraint was relaxed to allow $O(n^5)$ solutions to pass.
+
+---
+
+# Afterthoughts
+
+I really enjoyed setting the problems for CodeNection 2023. I guess the best part about it is watching people try to use different approaches to crack your problems. Will I do it again? Probably not (UPD: I helped out in writing problems for CodeNection 2024 too). Preparing a competition like this takes a lot of commitment and dedication, and I have other focuses and responsibilities these days. It would be hard for me to juggle all of them at the same time.
+
+I actually wanted to write about CodeNection 2023 right after it ended, but I never got the motivation, and I didn't know what to really write about it. Until recently, I finally decided to write about it, but yeah, it comes with a price—I don't really remember many details, as many things had happened right after it. Anyway, I hope you enjoy reading it. Thank you!
