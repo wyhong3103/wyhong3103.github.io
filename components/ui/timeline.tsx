@@ -48,7 +48,8 @@ const timelineData = [
             href="https://iccv.thecvf.com/virtual/2025/index.html"
             title="ICCV 2025"
           />{' '}
-          at Honolulu. Had a <AnimatedLink href="/blog/hawaiyaiyai"title="great time"/> there!
+          at Honolulu. Had a{' '}
+          <AnimatedLink href="/blog/hawaiyaiyai" title="great time" /> there!
         </p>
       </div>
     </div>
@@ -92,28 +93,6 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  // <div key={5} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="Jun 2025" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Received the Best FYP Award in Data Science.</p>
-  //     </div>
-  //   </div>
-  // </div>,
-  // <div key={6} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="May 2025" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>1st Runner Up, PLN 2025 (PEKOM).</p>
-  //     </div>
-  //   </div>
-  // </div>,
   <div key={7} className="relative mt-8 flex gap-4">
     <div className="relative z-10 flex-shrink-0">
       <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
@@ -133,7 +112,7 @@ const timelineData = [
       <MonthYear monthYear="Dec 2024" />
       <div className="flex flex-col gap-2">
         <p>
-      Advisor & Problem Author for CodeNection 2024. Authored this {' '}
+          Advisor & Problem Author for CodeNection 2024. Authored this{' '}
           <AnimatedLink
             href="https://www.hackerrank.com/contests/codenection-2024-preliminary-round-open-category/challenges/cn24-15"
             title="problem"
@@ -144,28 +123,6 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  // <div key={9} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="Sep 2024" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Champion, Data Science Digital Race 2024 (UMDAC).</p>
-  //     </div>
-  //   </div>
-  // </div>,
-  // <div key={10} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="Aug 2024" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Champion, Monash Coding League S2 (MUMTEC).</p>
-  //     </div>
-  //   </div>
-  // </div>,
   <div key={11} className="relative mt-8 flex gap-4">
     <div className="relative z-10 flex-shrink-0">
       <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
@@ -177,28 +134,6 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  // <div key={12} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="May 2024" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Champion, PLN 2024 (PEKOM).</p>
-  //     </div>
-  //   </div>
-  // </div>,
-  // <div key={13} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="Apr 2024" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Champion, Monash Coding League S1 (MUMTEC).</p>
-  //     </div>
-  //   </div>
-  // </div>,
   <div key={14} className="relative mt-8 flex gap-4">
     <div className="relative z-10 flex-shrink-0">
       <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
@@ -218,17 +153,7 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  // <div key={15} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear="Sep 2023" />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Champion, Monash Coding League S2 (MUMTEC).</p>
-  //     </div>
-  //   </div>
-  // </div>,
+
   <div key={16} className="relative mt-8 flex gap-4">
     <div className="relative z-10 flex-shrink-0">
       <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
@@ -236,21 +161,17 @@ const timelineData = [
     <div className="relative bottom-1.5 flex-1 pb-0">
       <MonthYear monthYear="Jun 2023" />
       <div className="flex flex-col gap-2">
-        <p>Reached <AnimatedLink href="https://codeforces.com/profile/wyhong3103" title="Candidate Master"/> (96th percentile) on Codeforces.</p>
+        <p>
+          Reached{' '}
+          <AnimatedLink
+            href="https://codeforces.com/profile/wyhong3103"
+            title="Candidate Master"
+          />{' '}
+          (96th percentile) on Codeforces.
+        </p>
       </div>
     </div>
   </div>,
-  // <div key={17} className="relative mt-8 flex gap-4">
-  //   <div className="relative z-10 flex-shrink-0">
-  //     <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
-  //   </div>
-  //   <div className="relative bottom-1.5 flex-1 pb-0">
-  //     <MonthYear monthYear={'Apr 2023'} />
-  //     <div className="flex flex-col gap-2">
-  //       <p>Champion, Monash Coding League S1 (MUMTEC).</p>
-  //     </div>
-  //   </div>
-  // </div>,
 ]
 
 const partitionBatches = (events: any[]) => {
