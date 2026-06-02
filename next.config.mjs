@@ -6,12 +6,17 @@ import rehypeKatex from 'rehype-katex'
 const nextConfig = {
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  output: 'export',
+  images: {
+    unoptimized: true,
+  },
 }
 
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
-    rehypePlugins: [remarkMath, rehypeKatex],
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
   },
 })
 
