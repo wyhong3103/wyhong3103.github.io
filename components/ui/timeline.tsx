@@ -31,7 +31,7 @@ const timelineData = [
     <div className="relative bottom-1.5 flex-1 pb-0">
       <MonthYear monthYear="Jan 2026" />
       <div className="flex flex-col gap-2">
-        <p>Joined Grab as a full-time Machine Learning Engineer.</p>
+        <p>Joined Grab as an MLE. Solving impactful problems with cool solutions!</p>
       </div>
     </div>
   </div>,
