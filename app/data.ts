@@ -185,6 +185,12 @@ export const ACHIEVEMENTS: Achievements[] = [
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    title: 'Optimizing Heuristic Rankers',
+    description: 'How I overkilled a problem with Constrained BO and LLM as a simulator.',
+    link: '/blog/optimizing-heuristic-rankers',
+    uid: 'blog-9',
+  },
+  {
     title: 'One week in the Aloha State 🌴',
     description: 'So, I somehow ended up in Hawaii for a week.',
     link: '/blog/hawaiyaiyai',

@@ -1,0 +1,369 @@
+import BlogHeader from '@/components/mdx/blog-header'
+import MultiImage from '@/components/mdx/multi-image'
+
+<BlogHeader title='Optimizing Heuristic Rankers' date='12 July 2026'/>
+
+So a while back, a few friends and I started a project called the [Unofficial FCI Forums](https://unofficial-fci-forums.com/), a central platform for MMU FCI students to share information, which we launched around March 2026. We actually started building it two years ago, and... I would love to go through this entire journey, but that's a story for another day. 
+
+One key feature of the forum is its recommendation algorithm. Due to lack of resources, we started off with a simple heuristic ranker.
+
+<MultiImage
+  images={[
+    "/images/blogs/optimizing-heuristic-rankers/home.png",
+  ]}
+  caption="The homepage of the forum, posts are ranked by our heuristic ranker."
+  width="500px"
+  height="350px"
+/>
+
+The heuristic ranker, denoted by $f$, is defined as:
+
+$$
+\begin{align*}
+f(x) = \frac{x_{\text{votes}} + (x_{\text{comments}} \times w_{\text{comments}}) + \text{bias}}{(x_{\text{age}}+2)^{w_{\text{age}}}}
+\end{align*}
+$$
+
+where $x$ is the post, $x_{\text{votes}}$ is the net votes of the post, $x_{\text{comments}}$ is the number of comments, $x_{\text{age}}$ is the age of the post in hours, $w_{\text{comments}}$ and $w_{\text{age}}$ are weights, and $\text{bias}$ is a bias term. The weights and biases are hyperparameters that we set almost arbitrarily.
+
+Intuitively, the nominator is the "value" of a post and the denominator is the "decay" of that value over time, this is to ensure that newer posts are ranked higher than older posts (a key assumption we made for simplicity). Visually, this is how "decay" changes over time for different $w_{age}$:
+
+<MultiImage
+  images={[
+    "/images/blogs/optimizing-heuristic-rankers/age_decay.png",
+  ]}
+  caption="The decay multiplier for different values of x_age and w_age."
+  width="500px"
+  height="350px"
+/>
+
+
+The $\text{bias}$ is a non-zero value to ensure posts with zero votes and comments are ranked higher than posts with negative votes, while the $+2$ is added to prevent division by zero (when $x_{\text{age}}=0$) and to dampen early decay (when $x_{\text{age}}=1$).
+There are a few problems with the current approach:
+1. Both $x_{\text{votes}}$ and $x_{\text{comments}}$ grow linearly, and can potentially blow up when there's an extremely viral post.
+2. Lack of other components that have influence on the relevance of a post, such as reputation of the author and the total vote counts.
+3. The hyperparameters are almost arbitrary, which might not be the optimal.
+
+Clearly, we needed a revamp of the ranker and a smart, objective way to find the best hyperparameters.
+
+# Revamping the Ranker
+
+To fix the first two issues, we proposed a refined ranker:
+
+$$
+\begin{align*}
+f(x) = \frac{V(x)}{(x_{\text{age}}+2)^{w_{\text{age}}}}
+\end{align*}
+$$
+
+where the new post value, $V(x)$, is computed as:
+
+$$
+\begin{align*}
+V(x) &= (\text{symlog}(x_{\text{net votes}}) \times \log(x_{\text{vote count}}+1) \times w_{\text{votes}}) \\
+&\quad + (\log(x_{\text{comments}}+1) \times w_{\text{comments}}) \\
+&\quad + (\text{symlog}(x_{\text{reputation}}) \times w_{\text{reputation}}) + \text{bias}
+\end{align*}
+$$
+
+The general intuition here is similar to the original ranker. The main difference is that we apply $\log$ and $\text{symlog}$ (symmetric log: $\text{symlog}(x) = \text{sign}(x) \times \log(|x|+1)$) to positive-only and real-valued components before weighting them. This prevents viral posts from completely breaking the feed. We also introduced two new signals: the total vote count (to help weight the confidence of net votes) and the author's reputation (acting as a proxy for trustworthiness) to address the lack of context.
+
+# Solving the Optimal Weights Problem
+
+Cool, now we have a refined ranker. But this is where the real challenge begins: how do we actually find the optimal hyperparameters?
+
+First, let's define what "optimal" means for our forum. A great ranker should recommend posts that lead to clicks (high relevance) during a user's session. At the same time, we want to ensure users see a healthy mix of new posts (assuming new ones have been published). So, our goal is to maximize relevance while maintaining a certain level of freshness.
+
+Formally, we define the objective as follows:
+
+$$
+\begin{align*}
+\max_{H} \quad & \mathbb{E}_{s \sim \mathcal{D}_{\text{session}}} [\text{clicks}(s; H)] \\
+\text{s.t.} \quad & \mathbb{E}_{s \sim \mathcal{D}_{\text{session}}} [\text{newness}(s; H)] \geq C_{\text{newness}}
+\end{align*}
+$$
+
+where $s$ is a browsing session, $H$ is the set of hyperparameters, $\text{clicks}(s; H)$ is the number of clicks in session $s$ under $H$, $\text{newness}(s; H)$ is the session's newness score, and $C_{\text{newness}}$ is our minimum freshness threshold.
+
+This is a great start. However, one limitation of this objective is that it does not account for the ranking order: if a user clicks four posts in a session, recommending those posts at the very top of the feed versus at the very bottom results in the same score. In practice, we want to present relevant posts as early as possible to capture user interest and prevent fatigue. To address this, we define the session score $\text{clicks}(s; H)$ by discounting each click based on its position:
+
+$$
+\text{clicks}(s; H) = \sum_{i \in S_{\text{click}}} \frac{1}{\log_2(i) + 1}
+$$
+
+where $S_{\text{click}}$ is the set of clicked posts in session $s$. This is essentially a simplified version of [Discounted Cumulative Gain](https://en.wikipedia.org/wiki/Discounted_cumulative_gain), where each clicked post has a binary relevance of 1.
+
+## LLM as Simulator
+
+In an ideal world, we'd evaluate each hyperparameter set $H$ using real user interactions. But running A/B tests is pretty much impossible for us right now: our forum averages just 5-10 active users daily, meaning any live experiment would take forever and be incredibly noisy.
+
+Instead, we decided to use Large Language Models (LLMs) to simulate user behavior. We prompt the LLM to model three basic actions:
+- **Click**: The user finds a post interesting and clicks on it.
+- **Scroll**: The user skips the current post but keeps scrolling.
+- **Quit**: The user gets bored or tired and closes the tab.
+
+Here is how we set up the simulation framework:
+
+### 1. Simulating Sessions
+
+Given some hyperparameters $H$ and all posts $X$, we build a sequence of user sessions. Each session $i$ is defined by a login time $T_i$. In that session, we only show posts created *before* $T_i$, ranked in descending order by $f(x; H)$.
+
+To determine $T_i$, we group posts chronologically and trigger a login event every $N$ posts. We chose this over fixed time intervals because post frequency is highly non-uniform over time (it roughly follows a $\frac{1}{x}$ distribution). Since our forum has about 100 posts, we set $N=10$ to balance API costs with realistic timeline gaps.
+
+This sequential setup is crucial. If we just showed all posts at once, we couldn't track whether a user had already seen a post in a previous session. That would reward bad hyperparameters that show the same posts over and over again.
+
+### 2. Exhaustion Mechanism
+
+A naive simulation where the LLM evaluates every single post in every session would require a quadratic number of API calls ($O(|X|^2)$). Since we're quite broke, we had to optimize this. We only call the LLM to evaluate *new* (unseen) posts, and model user fatigue through an exhaustion mechanism.
+
+We set two parameters: a viewed count minimum $E_c$ and an exhaustion ratio $E_T$. In any session, if the number of already-seen posts exceeds $E_c$, and the ratio of seen posts to total posts encountered so far reaches $E_T$, the simulation assumes the user is bored and terminates the session.
+
+The intuition is that if the majority of the posts encountered in a session have already been seen, users are unlikely to keep scrolling, quickly becoming fatigued and exiting.
+
+### 3. User Personas
+
+To ensure the LLM responses are representative of our target users rather than general web users, we define three distinct student personas:
+
+- **The Hyper Achiever**: The career-obsessed student who only cares about internships, competitive jobs, and academic queries, while ignoring social chatter.
+- **The Typical Student**: A balanced student looking for campus life, study tips, and relatable career advice, actively avoiding toxic competitiveness and forum drama.
+- **The Lost Freshman**: An overwhelmed first-year student trying to navigate logistics, make friends, and survive imposter syndrome, skipping advanced academic or career content.
+
+### 4. Aggregating The Results
+
+Finally, we average the simulated $\text{clicks}(s; H)$ and $\text{newness}(s; H)$ across all sessions to compute the final objective score. 
+
+<details>
+<summary>Pseudocode</summary>
+
+```python
+def simulate_sessions_batch(all_posts, hyperparameters):
+    # Sort posts chronologically (oldest first)
+    posts = sort_by_date_ascending(all_posts)
+    
+    # Initialize results and user history for each persona
+    results = {persona: {"clicks": 0, "views": 0, "discounted_clicks": 0.0} for persona in PERSONAS}
+    viewed = {persona: set() for persona in PERSONAS}
+    
+    # Simulating Sessions: Trigger login events chronologically every N posts
+    N = 10
+    total_sessions = ceil(len(posts) / N)
+    
+    for session_idx in range(total_sessions):
+        # Determine current login time (T_i)
+        cutoff_index = min(len(posts), (session_idx + 1) * N) - 1
+        T_i = posts[cutoff_index].created_at
+        
+        # Display only posts created before T_i, ranked by heuristic f(x; H)
+        active_posts = filter_by_date(posts, before=T_i)
+        ranked_posts = sort_by_score(active_posts, weights=hyperparameters)
+        
+        # Simulate each persona browsing the feed
+        for persona in PERSONAS:
+            clicks_count = 0
+            views_count = 0
+            seen_count = 0
+            discounted_clicks_count = 0.0
+            
+            inputs_list = []
+            valid_posts = []
+            
+            # 1. Exhaustion Mechanism & Duplicate Filtering BEFORE LLM calls
+            for idx, post in enumerate(ranked_posts):
+                if post.id in viewed[persona]:
+                    seen_count += 1
+                    # Fatigue check: terminate early if seen ratio/count exceeds limits
+                    if seen_count >= DUP_COUNT_LIMIT and (seen_count / (idx + 1)) >= DUP_RATIO_LIMIT:
+                        break
+                    continue  # Skip evaluating duplicates
+                    
+                if len(valid_posts) >= MAX_EVAL_POSTS:
+                    break
+                
+                # Queue unseen post for batch evaluation
+                inputs_list.append(prepare_llm_input(persona, post, rank=idx + 1))
+                valid_posts.append(post)
+                
+            if not inputs_list:
+                continue
+                
+            # 2. Call the LLM in batch (runs requests concurrently to optimize API speed)
+            responses = query_llm_batch(inputs_list)
+            
+            # 3. Process the results sequentially to respect the 'quit' logic
+            for idx, (post, decision) in enumerate(zip(valid_posts, responses)):
+                # Mark post as viewed
+                viewed[persona].add(post.id)
+                
+                if decision == "quit":
+                    break
+                
+                views_count += 1
+                if decision == "click":
+                    # Calculate Discounted Clicks (Discounted Cumulative Gain)
+                    rank = idx + 1
+                    discounted_clicks_count += 1.0 / log2(rank + 1)
+                    clicks_count += 1
+            
+            # Accumulate session counts
+            results[persona]["discounted_clicks"] += discounted_clicks_count
+            results[persona]["clicks"] += clicks_count
+            results[persona]["views"] += views_count
+            
+    # 4. Aggregating The Results: Average metrics across all sessions
+    for persona in PERSONAS:
+        results[persona]["discounted_clicks"] /= total_sessions
+        results[persona]["clicks"] /= total_sessions
+        results[persona]["views"] /= total_sessions
+        
+    return results
+```
+</details>
+
+## Constrained Optimization
+
+A straightforward way to solve this constrained optimization problem is through offline optimization. Under this approach, we would run simulations across a grid of hyperparameter configurations to generate training data, build two surrogate models to map any hyperparameter set $H$ to its expected click and newness metrics, and solve the Lagrangian using an offline solver.
+
+However, the major limitation of this approach is its heavy dependence on the accuracy of the surrogate models. To train reliable models, we would need a large, representative dataset of simulations. This is highly impractical for us because a single simulation run can take a long time, making grid-based data generation prohibitively slow and expensive.
+
+So, we opted for online optimization. Instead of guessing the whole parameter space upfront, we optimize in an active, closed loop. To do this efficiently without blowing through our API limits, we turned to Constrained Bayesian Optimization (BO).
+
+To frame the problem, we need to define two components: the surrogate models and the acquisition function.
+
+### Surrogate Models
+
+The job of our surrogate models is to estimate the clicks and newness functions, but more importantly, to quantify how unsure they are. We use these uncertainty estimates to guide our parameter choices in the loop. To stay sample-efficient, we train two independent Gaussian Processes (GPs), $M_{\text{clicks}}(H)$ and $M_{\text{newness}}(H)$. At any hyperparameter set $H$, they give us a normal distribution of what they expect the clicks and newness to be:
+
+$$
+\begin{aligned}
+M_{\text{clicks}}(H) &\sim \mathcal{N}\left(\mu_{\text{clicks}}(H), \sigma_{\text{clicks}}^2(H)\right) \\
+M_{\text{newness}}(H) &\sim \mathcal{N}\left(\mu_{\text{newness}}(H), \sigma_{\text{newness}}^2(H)\right)
+\end{aligned}
+$$
+
+where $\mu$ and $\sigma$ is the mean and standard deviation of the normal distribution, respectively.
+
+### Acquisition Function
+
+With our GP models in place, we need a way to actually choose the next parameters. This is where the acquisition function, $A(H)$, comes in. It scores any candidate $H$ by balancing how good we think it is with how unsure we are:
+
+$$
+A(H) = \text{EI}(H) \cdot \text{PF}(H)
+$$
+
+where $\text{EI}(H)$ is the expected improvement for the objective (clicks), and $\text{PF}(H)$ is the probability of feasibility (the probability that the newness constraint is satisfied). Formally, they are defined as:
+
+$$
+\text{EI}(H) = (\hat{\mu}_{\text{clicks}} - f^+) \Phi(z_{\text{clicks}}) + \hat{\sigma}_{\text{clicks}} \phi(z_{\text{clicks}})
+$$
+$$
+\text{PF}(H) = \Phi(z_{\text{newness}})
+$$
+
+where the Z-scores are computed as:
+
+$$
+z_{\text{clicks}} = \frac{\hat{\mu}_{\text{clicks}} - f^+}{\hat{\sigma}_{\text{clicks}}}, \quad z_{\text{newness}} = \frac{\hat{\mu}_{\text{newness}} - C_{\text{newness}}}{\hat{\sigma}_{\text{newness}}}
+$$
+
+Here, $f^+$ is the maximum expected click rate observed so far among feasible hyperparameter configurations, $\Phi(\cdot)$ and $\phi(\cdot)$ denote the standard normal cumulative distribution function (CDF) and probability density function (PDF), respectively.
+
+Intuitively, $\text{EI}(H)$ balances exploitation (targeting configurations with high expected click rates $\hat{\mu}_{\text{clicks}}$) and exploration (targeting areas with high uncertainty $\hat{\sigma}_{\text{clicks}}$). $\text{PF}(H)$ penalizes regions of the hyperparameter space that are likely to violate the minimum newness constraint. Multiplying the two terms yields a unified utility score that represents the overall potential of sampling $H$ next.
+
+### Putting It All Together
+
+With these components defined, the complete Bayesian Optimization loop is structured as follows:
+
+1. Fit the surrogate models $M_{\text{clicks}}$ and $M_{\text{newness}}$ on the training data ($X_{\text{train}}$, $Y_{\text{clicks}}$, and $Y_{\text{newness}}$).
+2. Find the next hyperparameter candidate $H_{\text{next}}$ that maximizes the acquisition function $A(H)$ using a solver.
+3. Run the simulation for $H_{\text{next}}$ and append the new observations to the training datasets.
+4. Repeat.
+
+# Results
+
+To evaluate the optimization process, we ran a total of 50 simulations. The first 20 iterations served as a pure exploration phase (sampling the parameter space uniformly), while the remaining 30 iterations were guided by the BO loop.
+
+In terms of optimization progress, BO successfully maximized click rates, as indicated by a higher average click yield compared to the initial exploration phase. The overall headroom for improvement was relatively constrained, we believe this is due to the limited size and diversity of our dataset, as well as the rigid architecture of the heuristic ranker. Nevertheless, by the end of the optimization loop, we achieved an approximate 10% improvement over the best parameter configuration found during the pure exploration phase.
+
+<MultiImage
+  images={[
+    "/images/blogs/optimizing-heuristic-rankers/result.png",
+  ]}
+  caption="Bayesian Optimization Progress & Convergence."
+  width="500px"
+  height="350px"
+/>
+
+We can also observe how BO selects its next query candidate. As we know, BO balances exploitation and exploration while simultaneously satisfying the constraints. Visualizing the GP predictions for clicks and views at iteration 20 illustrates this behavior: the acquisition function prioritizes a candidate with a high potential click yield while avoiding regions likely to violate the view constraint.
+
+<MultiImage
+  images={[
+    "/images/blogs/optimizing-heuristic-rankers/iteration_20.png",
+  ]}
+  caption="Bayesian Optimization at Iteration 20."
+  width="500px"
+  height="350px"
+/>
+
+By fitting the GP model on all 50 observations, we can map the sensitivity of expected clicks and views to the two primary parameters: the age decay rate and the votes weight. As expected, a very low age decay rate tends to trigger constraint violations because old posts linger indefinitely on the feed. While a very high decay rate drives up views by constantly circulating fresh posts, it is sub-optimal for click yield because recency alone does not guarantee relevance. Ultimately, the optimization converges on a moderate decay rate for age paired with a high weight for votes.
+
+<MultiImage
+  images={[
+    "/images/blogs/optimizing-heuristic-rankers/votes_vs_age_contour.png",
+  ]}
+  caption="Contour Map of Expected Clicks & Views on Votes and Age."
+  width="500px"
+  height="350px"
+/>
+
+Finally, we evaluate the optimized weights against three baselines: the original heuristic (the legacy ranker currently serving the forum), hottest (sorting strictly by votes), and latest (sorting strictly by recency). Compared to the best-performing baseline (latest), our refined parameters yield an 11.87% improvement in clicks. More significantly, they deliver a 34.13% improvement over the original production ranker. As expected, the hottest baseline performs poorly because it ignores temporal decay, causing the feed to become stale and lose user engagement.
+
+<table className="w-full border-collapse my-6">
+  <thead>
+    <tr className="border-b border-gray-200 dark:border-gray-800">
+      <th className="py-2 text-left font-semibold">Model</th>
+      <th className="py-2 text-right font-semibold">Discounted Clicks</th>
+      <th className="py-2 text-right font-semibold">Views</th>
+      <th className="py-2 text-right font-semibold">Improvement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr className="border-b border-gray-100 dark:border-gray-900">
+      <td className="py-2 font-medium">refined</td>
+      <td className="py-2 text-right font-mono">2.254115</td>
+      <td className="py-2 text-right font-mono">8.444444</td>
+      <td className="py-2 text-right font-mono">-</td>
+
+    </tr>
+    <tr className="border-b border-gray-100 dark:border-gray-900">
+      <td className="py-2 font-medium">original</td>
+      <td className="py-2 text-right font-mono">1.680561</td>
+      <td className="py-2 text-right font-mono">6.622222</td>
+      <td className="py-2 text-right font-mono text-gray-500 dark:text-gray-400">+34.13%</td>
+    </tr>
+    <tr className="border-b border-gray-100 dark:border-gray-900">
+      <td className="py-2 font-medium">hottest</td>
+      <td className="py-2 text-right font-mono">0.348715</td>
+      <td className="py-2 text-right font-mono">1.333333</td>
+      <td className="py-2 text-right font-mono text-gray-500 dark:text-gray-400">+546.41%</td>
+    </tr>
+    <tr className="border-b border-gray-100 dark:border-gray-900">
+      <td className="py-2 font-medium">latest</td>
+      <td className="py-2 text-right font-mono">2.014915</td>
+      <td className="py-2 text-right font-mono">8.644444</td>
+      <td className="py-2 text-right font-mono text-gray-500 dark:text-gray-400">+11.87%</td>
+    </tr>
+  </tbody>
+</table>
+
+<MultiImage
+  images={[
+    "/images/blogs/optimizing-heuristic-rankers/comparison.png",
+  ]}
+  caption="Final Comparison."
+  width="400px"
+  height="400px"
+/>
+
+# Afterthoughts
+
+Since starting my job on the ETA & pricing team at Grab, I've run into a lot of constrained optimization models. They really sparked my interest, which is what ultimately inspired this project. It took me a while to actually get started, but I'm really glad I finally saw it through. I learned a ton about constrained optimization and had a blast building the optimization and simulation loop. Also, shout out to my guy Dong Yu for lending me his DeepSeek API key for the LLM simulations. Hope you learned something from this post, too!
