@@ -7,13 +7,17 @@ type MultiImageProps = {
   caption?: string;
   height?: string;
   width?: string;
+  columns?: number;
+  maxWidth?: string;
 };
 
 const MultiImage: React.FC<MultiImageProps> = ({
   images,
   caption,
-  height = '300px',
-  width = 'auto',
+  height,
+  width,
+  columns,
+  maxWidth,
 }) => {
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
@@ -38,15 +42,32 @@ const MultiImage: React.FC<MultiImageProps> = ({
     };
   }, [activeImage]);
 
+  const isGrid = typeof columns === 'number';
+  const defaultHeight = isGrid ? '100%' : '300px';
+  const defaultWidth = isGrid ? '100%' : 'auto';
+
+  const finalHeight = height ?? defaultHeight;
+  const finalWidth = width ?? defaultWidth;
+
   return (
     <div className="text-center my-8">
-      <div className="flex flex-wrap justify-center gap-4">
+      <div
+        className={isGrid ? "grid gap-4 mx-auto" : "flex flex-wrap justify-center gap-4 mx-auto"}
+        style={{
+          gridTemplateColumns: isGrid ? `repeat(${columns}, minmax(0, 1fr))` : undefined,
+          maxWidth: maxWidth || undefined,
+        }}
+      >
         {images.map((src, index) => (
           <img
             key={index}
             src={src}
             alt={`Image ${index + 1}`}
-            style={{ maxHeight: height, width }}
+            style={
+              isGrid
+                ? { width: finalWidth, height: finalHeight, objectFit: 'cover' }
+                : { maxHeight: finalHeight, width: finalWidth }
+            }
             className="rounded-md object-cover !m-0 cursor-zoom-in transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:brightness-105 active:scale-[0.98]"
             onClick={() => setActiveImage(src)}
           />
