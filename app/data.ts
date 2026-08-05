@@ -185,6 +185,12 @@ export const ACHIEVEMENTS: Achievements[] = [
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    title: 'Training a CS Agent with RL',
+    description: 'How I trained a CS Deathmatch bot with RL.',
+    link: '/blog/cs-rl-agent',
+    uid: 'blog-10',
+  },
+  {
     title: 'Optimizing Heuristic Ranker',
     description: 'How I overkilled a problem with Constrained BO and LLM as a simulator.',
     link: '/blog/optimizing-heuristic-rankers',
