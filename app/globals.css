@@ -37,3 +37,12 @@ body {
 .dark .prose {
   --tw-prose-pre-bg: #1a1a1a; /* dark mode value */
 }
+
+/* Make block LaTeX equations horizontally scrollable when overflowing */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}

@@ -170,19 +170,9 @@ Due to computational constraints (and the fact that I am broke), I adopted a lig
   height="350px"
 />
 
-All three networks uses the same backbone architecture. The primary differences lie in their final output heads and training objectives.
+All three networks use the same backbone architecture. The primary differences lie in their final output heads and training objectives.
 
-For the policy network $\pi_{\phi}$, the output consists of parameters for action-specific probability distributions. Formally, for discrete actions (e.g., shooting, reloading, and directional movement), the network outputs logits parameterizing a Bernoulli distribution, thereby allowing stochastic action sampling:
-
-$$
-a_{\text{discrete}} \sim \text{Bernoulli}(p)
-$$
-
-For continuous actions (i.e., horizontal mouse yaw delta), the network outputs the mean $\mu$ and standard deviation $\sigma$ of a Gaussian distribution:
-
-$$
-a_{\text{continuous}} \sim \mathcal{N}(\mu, \sigma^2)
-$$
+For the policy network $\pi_{\phi}$, the output consists of parameters for action-specific probability distributions. For discrete actions (e.g., shooting, reloading, and directional movement), the network outputs logits parameterizing a Bernoulli distribution, and for continuous actions (i.e., horizontal mouse yaw delta), the network outputs the mean $\mu$ and standard deviation $\sigma$ of a Gaussian distribution.
 
 ## Stratified Sampling
 
@@ -232,7 +222,15 @@ This allows the agent to learn more efficiently because the distribution doesn't
 
 When the agent is interacting with the environment, we can let the agent takes a deterministic set of actions that agent thinks its the best. However, the issue with this is that, we're limitting the interaction, or the experiences to be collected to train the agent limited to what it already think its good, hence, it has very little exploration.
 
-Fortunately, because we structure the action outputs of the policy network to be probability distributions, we can directly sample it stochastically, allowing us to incorporate explorations naturally to agent's online interactions.
+Fortunately, because the policy network outputs probability distributions, we can sample actions stochastically to naturally incorporate exploration into the agent's online interactions:
+
+$$
+a_{\text{discrete}} \sim \text{Bernoulli}(p)
+$$
+
+$$
+a_{\text{continuous}} \sim \mathcal{N}(\mu, \sigma^2)
+$$
 
 # Putting Everything Together
 
@@ -284,7 +282,7 @@ The offline model's struggle to generalize is clear in the early online epochs, 
   images={[
     "/images/blogs/cs-rl-agent/online_curve.png",
   ]}
-  caption="Online training curves: Episode returns (left) and policy losses (middle and right)."
+  caption="Online training curves. Left: episode returns. Middle and Right: policy losses."
   width="500px"
   height="350px"
 />
@@ -379,7 +377,7 @@ To understand how the agent uses its occupancy grid for obstacle avoidance, we a
     "/images/blogs/cs-rl-agent/occupancy_2.png",
     "/images/blogs/cs-rl-agent/occupancy_3.png",
   ]}
-  caption="Grad-CAM visualizations highlighting occupancy grid regions that influence forward movement decisions."
+  caption="Grad-CAM visualizations highlighting occupancy grid regions that influence movement decisions."
   maxWidth="500px"
   columns={1}
 />
@@ -392,7 +390,7 @@ Finally, let's look at a demonstration of the resulting agent in action. The top
   images={[
     "/images/blogs/cs-rl-agent/gameplay.gif",
   ]}
-  caption="Agent gameplay demonstration (top: raw CS2 footage, bottom: agent perception and action output)."
+  caption="Agent gameplay demonstration. Top: raw CS2 footage. Bottom: agent perception and action output."
   width="500px"
   height="600px"
 />
