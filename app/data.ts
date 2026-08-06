@@ -185,7 +185,7 @@ export const ACHIEVEMENTS: Achievements[] = [
 
 export const BLOG_POSTS: BlogPost[] = [
   {
-    title: 'Training a CS Agent with RL',
+    title: 'Training an RL Agent to Play CS',
     description: 'How I trained a CS Deathmatch bot with RL.',
     link: '/blog/cs-rl-agent',
     uid: 'blog-10',
