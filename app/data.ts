@@ -192,7 +192,8 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     title: 'Optimizing Heuristic Ranker',
-    description: 'How I overkilled a problem with Constrained BO and LLM as a simulator.',
+    description:
+      'How I overkilled a problem with Constrained BO and LLM as a simulator.',
     link: '/blog/optimizing-heuristic-rankers',
     uid: 'blog-9',
   },
@@ -267,7 +268,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     label: 'CV',
-    link: '/cv_nov2025.pdf',
+    link: '/cv_jul2026.pdf',
   },
 ]
 
