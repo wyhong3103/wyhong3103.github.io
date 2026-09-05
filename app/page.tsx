@@ -144,8 +144,8 @@ export default function Personal() {
               title="Grab"
               // gradient="grab"
             />
-            , working on ETA and pricing models. Passionate about cool
-            algorithms and building real-world systems.
+            , working on dynamic pricing models. Passionate about cool
+            algorithms and building real-world systems. 
           </p>
           <p className="text-justify">
             I graduated from{' '}
@@ -200,13 +200,13 @@ export default function Personal() {
           <p className="text-justify">
             I enjoy{' '}
             <AnimatedLink
-              href="https://codeforces.com/profile/wyhong3103"
-              title="coding competitively"
-            />{' '}
-            and{' '}
-            <AnimatedLink
               href="https://github.com/wyhong3103"
               title="building cool side projects"
+            />{' '}
+            and used to{' '}
+            <AnimatedLink
+              href="https://codeforces.com/profile/wyhong3103"
+              title="code competitively"
             />
             . Always open to discussing ML, tech, or collaboration
             opportunities.
