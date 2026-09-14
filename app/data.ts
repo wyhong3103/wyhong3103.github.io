@@ -266,10 +266,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
     label: 'Email',
     link: 'mailto:wyhong3103@gmail.com',
   },
-  {
-    label: 'CV',
-    link: '/cv_jul2026.pdf',
-  },
+  // {
+  //   label: 'CV',
+  //   link: '/cv_jul2026.pdf',
+  // },
 ]
 
 export const EMAIL = 'wyhong3103@gmail.com'
