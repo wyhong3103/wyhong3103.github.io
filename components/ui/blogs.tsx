@@ -24,15 +24,17 @@ const partitionBatches = (blogs: any[]) => {
     batches[batches.length - 1].push(
       <Link
         key={post.uid}
-        className="-mx-3 rounded-xl px-3 py-3"
+        className="group -mx-3 rounded-lg px-3 py-3 transition-colors"
         href={post.link}
         data-id={post.uid}
       >
         <div className="flex flex-col space-y-1">
-          <h4 className="text-md text-zinc-900 dark:text-zinc-200">
+          <h4 className="font-medium text-zinc-900 decoration-zinc-400 decoration-1 underline-offset-4 group-hover:underline dark:text-zinc-100">
             {post.title}
           </h4>
-          <p className="text-zinc-500 dark:text-zinc-400">{post.description}</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            {post.description}
+          </p>
         </div>
       </Link>,
     )
@@ -48,7 +50,7 @@ const partitionBatches = (blogs: any[]) => {
     >
       <AnimatedBackground
         enableHover
-        className="h-full w-full rounded-lg bg-zinc-100 dark:bg-zinc-900/80"
+        className="h-full w-full rounded-lg bg-zinc-100/80 dark:bg-zinc-900/70"
         transition={{
           type: 'spring',
           bounce: 0,
@@ -63,7 +65,8 @@ const partitionBatches = (blogs: any[]) => {
 
 export default function Blogs() {
   const [shown, setShown] = useState(1)
-  const blogs = partitionBatches(BLOG_POSTS)
+  const visiblePosts = BLOG_POSTS.filter((post) => !post.hidden)
+  const blogs = partitionBatches(visiblePosts)
   return (
     <>
       <motion.section
@@ -71,7 +74,7 @@ export default function Blogs() {
         transition={TRANSITION_SECTION}
       >
         <h3
-          className="mb-3 font-[family-name:var(--font-playfair-display)] text-2xl font-medium text-zinc-900 dark:text-white"
+          className="mb-4 border-b border-zinc-200/80 pb-2.5 font-[family-name:var(--font-playfair-display)] text-2xl font-medium text-zinc-900 dark:border-zinc-800/80 dark:text-white"
           id="blogs"
         >
           Blogs
@@ -81,13 +84,13 @@ export default function Blogs() {
           {shown < blogs.length && (
             <div className="mt-4 text-right">
               <button
-                className="group inline-flex items-center text-sm font-medium text-zinc-600 transition-colors hover:cursor-pointer hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+                className="group inline-flex items-center font-[family-name:var(--font-fira-mono)] text-xs text-zinc-500 transition-colors hover:cursor-pointer hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
                 onClick={() => setShown((prev) => prev + 1)}
               >
                 Show More
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
+                  className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-y-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

@@ -94,7 +94,7 @@ function MagneticSocialLink({
     <Magnetic springOptions={{ bounce: 0 }} intensity={0.3}>
       <a
         href={link}
-        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full bg-zinc-100 px-2.5 py-1 text-sm text-black transition-colors duration-200 hover:bg-zinc-950 hover:text-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        className="group relative inline-flex shrink-0 items-center gap-1 rounded-full border border-zinc-200/80 bg-zinc-50/70 px-3 py-1 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:border-zinc-900 hover:bg-zinc-900 hover:text-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
       >
         {children}
         <svg
@@ -103,7 +103,7 @@ function MagneticSocialLink({
           viewBox="0 0 15 15"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="h-3 w-3"
+          className="h-3 w-3 opacity-70 transition-opacity group-hover:opacity-100"
         >
           <path
             d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.6326 3 11.7598 3.05268 11.8536 3.14645C11.9473 3.24022 12 3.36739 12 3.5L12 9.00001C12 9.27615 11.7761 9.50001 11.5 9.50001C11.2239 9.50001 11 9.27615 11 9.00001V4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z"
@@ -120,7 +120,7 @@ function MagneticSocialLink({
 export default function Personal() {
   return (
     <motion.main
-      className="space-y-24 text-zinc-500 dark:text-zinc-400"
+      className="space-y-16 text-zinc-600 dark:text-zinc-400"
       variants={VARIANTS_CONTAINER}
       initial="hidden"
       animate="visible"
@@ -129,13 +129,11 @@ export default function Personal() {
         variants={VARIANTS_SECTION}
         transition={TRANSITION_SECTION}
       >
-        <div className="flex flex-1 flex-col gap-5" id="top">
-          <div className="mt-16 mb-4 flex flex-col items-start gap-6 sm:flex-col sm:gap-8">
-            <div className="flex flex-col items-start">
-              <h1 className="font-[family-name:var(--font-playfair-display)] text-4xl tracking-tight text-zinc-900 md:text-5xl dark:text-zinc-50">
-                Yen Hong
-              </h1>
-            </div>
+        <div className="flex flex-1 flex-col gap-4 leading-relaxed" id="top">
+          <div className="mt-16 mb-2 flex items-center gap-5 border-b border-zinc-200/80 pb-5 dark:border-zinc-800/80">
+            <h1 className="font-[family-name:var(--font-playfair-display)] text-4xl tracking-tight text-zinc-900 md:text-5xl dark:text-zinc-50">
+              Yen Hong
+            </h1>
           </div>
           <p className="text-justify">
             Machine Learning Engineer at{' '}
@@ -219,7 +217,7 @@ export default function Personal() {
         transition={TRANSITION_SECTION}
       >
         <h3
-          className="mb-5 font-[family-name:var(--font-playfair-display)] text-2xl font-medium text-zinc-900 dark:text-white"
+          className="mb-6 border-b border-zinc-200/80 pb-2.5 font-[family-name:var(--font-playfair-display)] text-2xl font-medium text-zinc-900 dark:border-zinc-800/80 dark:text-white"
           id="news"
         >
           News
@@ -234,7 +232,7 @@ export default function Personal() {
         transition={TRANSITION_SECTION}
       >
         <h3
-          className="mb-5 font-[family-name:var(--font-playfair-display)] text-2xl font-medium text-zinc-900 dark:text-white"
+          className="mb-5 border-b border-zinc-200/80 pb-2.5 font-[family-name:var(--font-playfair-display)] text-2xl font-medium text-zinc-900 dark:border-zinc-800/80 dark:text-white"
           id="connect"
         >
           Connect

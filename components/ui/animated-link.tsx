@@ -22,7 +22,7 @@ const AnimatedLink: React.FC<AnimatedLinkProps> = ({
 
   // Base classes for the dashed underline
   const underlineStyles =
-    'border-b-2 border-dashed transition-colors duration-200'
+    'border-b border-dashed pb-[0.5px] transition-colors duration-200'
 
   return (
     <a
@@ -32,7 +32,7 @@ const AnimatedLink: React.FC<AnimatedLinkProps> = ({
       className={
         gradient
           ? `inline-block ${underlineStyles} border-current bg-gradient-to-r ${gradients[gradient]} bg-clip-text font-bold text-transparent`
-          : `inline-block ${underlineStyles} border-zinc-700 text-zinc-700 hover:border-black hover:text-black dark:border-zinc-400 dark:text-zinc-100 dark:hover:border-zinc-100 dark:hover:text-zinc-100`
+          : `inline-block ${underlineStyles} border-zinc-400 text-zinc-800 hover:border-zinc-900 hover:text-black dark:border-zinc-500 dark:text-zinc-200 dark:hover:border-zinc-100 dark:hover:text-white`
       }
     >
       {title}

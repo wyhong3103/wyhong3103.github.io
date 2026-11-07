@@ -17,31 +17,31 @@ type MonthYearProps = {
 
 const MonthYear = ({ monthYear }: MonthYearProps) => {
   return (
-    <h3 className="mb-1 text-base text-xs text-zinc-900 dark:text-zinc-200">
-      {monthYear.toUpperCase()}
+    <h3 className="w-20 shrink-0 font-[family-name:var(--font-fira-mono)] text-xs tracking-wider text-zinc-400 uppercase dark:text-zinc-500">
+      {monthYear}
     </h3>
   )
 }
 
 const timelineData = [
   <div key={1} className="relative flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Jan 2026" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>Joined Grab as an MLE. Solving impactful problems with cool solutions!</p>
       </div>
     </div>
   </div>,
-  <div key={2} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={2} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Oct 2025" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>
           Attended{' '}
           <AnimatedLink
@@ -54,13 +54,13 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  <div key={3} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={3} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Aug 2025" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>
           Attended{' '}
           <AnimatedLink href="https://www.oxfordml.school/" title="OxML 2025" />{' '}
@@ -70,13 +70,13 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  <div key={4} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={4} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Jul 2025" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>Started Machine Learning Engineer internship at Grab.</p>
         <p>
           <AnimatedLink
@@ -93,24 +93,24 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  <div key={7} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={7} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Apr 2025" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>Invited as a Guest Workshop Speaker at PLN 2025 (PEKOM).</p>
       </div>
     </div>
   </div>,
-  <div key={8} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={8} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Dec 2024" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>
           Advisor & Problem Author for CodeNection 2024. Authored this{' '}
           <AnimatedLink
@@ -123,24 +123,24 @@ const timelineData = [
       </div>
     </div>
   </div>,
-  <div key={11} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={11} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Jul 2024" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>Started my Data Science internship at MoneyLion.</p>
       </div>
     </div>
   </div>,
-  <div key={14} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={14} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Dec 2023" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>
           Competition Lead for CodeNection 2023. Authored this{' '}
           <AnimatedLink
@@ -154,13 +154,13 @@ const timelineData = [
     </div>
   </div>,
 
-  <div key={16} className="relative mt-8 flex gap-4">
-    <div className="relative z-10 flex-shrink-0">
-      <div className="flex h-3 w-3 items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-400" />
+  <div key={16} className="relative mt-6 flex gap-4">
+    <div className="relative z-10 flex-shrink-0 pt-1.5">
+      <div className="h-2 w-2 rounded-full bg-zinc-700 ring-4 ring-white dark:bg-zinc-400 dark:ring-zinc-950" />
     </div>
-    <div className="relative bottom-1.5 flex-1 pb-0">
+    <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Jun 2023" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-1.5">
         <p>
           Reached{' '}
           <AnimatedLink
@@ -203,22 +203,22 @@ export const Timeline = () => {
 
   return (
     <>
-      <div className="relative mt-10 text-zinc-500 dark:text-zinc-400">
-        <div className="absolute top-1 bottom-0 left-1.5 w-px bg-gray-300 dark:bg-gray-500" />
+      <div className="relative mt-2 text-zinc-600 dark:text-zinc-400">
+        <div className="absolute top-2 bottom-2 left-[3.5px] w-px bg-zinc-200 dark:bg-zinc-800" />
         {batches
           .slice(0, Math.min(batches.length, shown))
           .map((batch) => batch)}
       </div>
       {shown < batches.length && (
-        <div className="mt-4 text-right">
+        <div className="mt-5 text-right">
           <button
-            className="group inline-flex items-center text-sm font-medium text-zinc-600 transition-colors hover:cursor-pointer hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+            className="group inline-flex items-center font-[family-name:var(--font-fira-mono)] text-xs text-zinc-500 transition-colors hover:cursor-pointer hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
             onClick={() => setShown((prev) => prev + 1)}
           >
             Show More
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
+              className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-y-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

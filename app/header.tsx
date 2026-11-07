@@ -15,13 +15,13 @@ export function Header() {
       <motion.nav
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white/70 p-2 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-2xl"
+        className="flex items-center gap-1 rounded-full border border-zinc-200/80 bg-white/80 p-1.5 shadow-sm backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/80"
       >
         {navItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
-            className="rounded-full px-5 py-2 text-sm font-medium text-zinc-600 transition-all duration-200 hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+            className="rounded-full px-4 py-1.5 text-sm text-zinc-600 transition-all duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
           >
             {item.name}
           </Link>

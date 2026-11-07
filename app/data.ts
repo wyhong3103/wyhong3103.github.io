@@ -28,6 +28,7 @@ type BlogPost = {
   description: string
   link: string
   uid: string
+  hidden?: boolean
 }
 
 type SocialLink = {
@@ -214,18 +215,21 @@ export const BLOG_POSTS: BlogPost[] = [
     description: 'Machine Learning Summer School at Oxford!',
     link: '/blog/oxml-2025',
     uid: 'blog-6',
+    hidden: true,
   },
   {
     title: 'Conformal Prediction',
     description: 'Quantifying uncertainty in prediction tasks.',
     link: '/blog/conformal-prediction',
     uid: 'blog-5',
+    hidden: true,
   },
   {
     title: 'Hello World #2',
     description: "print('Hello World!')",
     link: '/blog/hello-world-2',
     uid: 'blog-4',
+    hidden: true,
   },
   {
     title: 'Problemsetting at CodeNection 2023',
@@ -240,12 +244,14 @@ export const BLOG_POSTS: BlogPost[] = [
       'Visualizing the linear algebra involved in debiasing word embeddings.',
     link: '/blog/debiasing-word-embedding',
     uid: 'blog-2',
+    hidden: true,
   },
   {
     title: 'Dynamic Programming on Tree',
     description: 'A nice problem demonstrating DP on Tree.',
     link: '/blog/cf-890-e1',
     uid: 'blog-1',
+    hidden: true,
   },
 ]
 
