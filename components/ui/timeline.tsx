@@ -31,7 +31,9 @@ const timelineData = [
     <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
       <MonthYear monthYear="Jan 2026" />
       <div className="flex flex-1 flex-col gap-1.5">
-        <p>Joined Grab as an MLE. Solving impactful problems with cool solutions!</p>
+        <p>
+          Joined Grab as an MLE. Solving impactful problems with cool solutions!
+        </p>
       </div>
     </div>
   </div>,
@@ -64,8 +66,8 @@ const timelineData = [
         <p>
           Attended{' '}
           <AnimatedLink href="https://www.oxfordml.school/" title="OxML 2025" />{' '}
-          at Oxford. Read about my experience{' '}
-          <AnimatedLink href="/blog/oxml-2025" title="here" />.
+          at Oxford. <AnimatedLink href="/blog/uk-2025" title="UK" /> was really
+          nice.
         </p>
       </div>
     </div>
